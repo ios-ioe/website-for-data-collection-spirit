@@ -1,0 +1,7 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+supabase==2.11.0
+python-dotenv==1.0.1
+sentence-transformers==3.3.1
+rapidfuzz>=3.11.0
+regex==2024.11.6
