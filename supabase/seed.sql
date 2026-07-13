@@ -9,7 +9,8 @@ insert into teams (team_id, team_name, access_code) values
   ('team_02', 'Team Machapuchare', 'fishtail-3390'),
   ('team_03', 'Team Annapurna',    'anna-5561'),
   ('team_04', 'Team Langtang',     'langtang-8823'),
-  ('team_05', 'Team Dhaulagiri',   'dhaula-1204')
+  ('team_05', 'Team Dhaulagiri',   'dhaula-1204'),
+  ('team_dev', 'Dev Test Team',    'dev-dev')
 on conflict (team_id) do update
   set team_name   = excluded.team_name,
       access_code = excluded.access_code;
