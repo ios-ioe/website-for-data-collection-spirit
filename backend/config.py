@@ -12,6 +12,18 @@ except Exception:
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 
+# Secret used to sign team/admin session tokens issued by this backend.
+# MUST be set in production — a missing secret means sessions cannot be trusted.
+SESSION_SECRET = os.environ.get("SESSION_SECRET", "")
+
+# Organizer password for /admin/login. Checked server-side only — never shipped to the browser.
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
+
+# How long a team/admin session token stays valid, in seconds. Default: 20 hours
+# (covers a one-day event with margin) so all 2-4 members of a team can stay logged
+# in on separate devices without re-entering the access code.
+SESSION_TTL_SECONDS = int(os.environ.get("SESSION_TTL_SECONDS", str(20 * 60 * 60)))
+
 MODEL_NAME = os.environ.get(
     "MODEL_NAME", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 )

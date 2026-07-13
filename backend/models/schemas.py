@@ -1,11 +1,74 @@
 """Pydantic schemas for API requests and responses."""
 
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
 class CheckSubmissionRequest(BaseModel):
     team_id: str = Field(..., min_length=1)
     text: str = Field(..., min_length=1)
+
+
+class LoginRequest(BaseModel):
+    access_code: str = Field(..., min_length=1)
+
+
+class LoginResponse(BaseModel):
+    team_id: str
+    team_name: str
+    token: str
+
+
+class AdminLoginRequest(BaseModel):
+    password: str = Field(..., min_length=1)
+
+
+class AdminLoginResponse(BaseModel):
+    token: str
+
+
+class SubmitRequest(BaseModel):
+    text: str = Field(..., min_length=1)
+    gender: int = 0
+    religional: int = 0
+    caste: int = 0
+    religion: int = 0
+    appearence: int = 0
+    socialstatus: int = 0
+    amiguity: int = 0
+    political: int = 0
+    Age: int = 0
+    Disablity: int = 0
+    source_platform: Optional[str] = None
+    source_date: Optional[str] = None
+    flag_duplicate: bool = False
+    flag_pii: bool = False
+
+
+class SubmitResponse(BaseModel):
+    id: str
+
+
+class MyCountResponse(BaseModel):
+    count: int
+
+
+class MarkReviewedRequest(BaseModel):
+    id: str
+    reviewed: bool = True
+
+
+class CreateTeamRequest(BaseModel):
+    team_name: str = Field(..., min_length=1)
+    contact_email: Optional[str] = None
+
+
+class TeamResponse(BaseModel):
+    team_id: str
+    team_name: str
+    access_code: str
+    contact_email: Optional[str] = None
 
 
 class DuplicateCheckResult(BaseModel):
