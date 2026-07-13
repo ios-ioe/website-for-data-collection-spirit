@@ -11,7 +11,6 @@ import {
 const Login = lazy(() => import("./pages/Login.jsx"));
 const Submit = lazy(() => import("./pages/Submit.jsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
-const Leaderboard = lazy(() => import("./pages/Leaderboard.jsx"));
 const Admin = lazy(() => import("./pages/Admin.jsx"));
 
 function PageFallback() {
@@ -54,7 +53,6 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
