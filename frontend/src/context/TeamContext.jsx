@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { setTeamToken } from "../lib/api.js";
 
 const TeamContext = createContext(null);
 const STORAGE_KEY = "bias_tool_team";
@@ -41,7 +42,10 @@ export function TeamProvider({ children }) {
     });
   };
 
-  const logout = () => setTeam(null);
+  const logout = () => {
+    setTeam(null);
+    setTeamToken(null);
+  };
 
   const value = useMemo(
     () => ({

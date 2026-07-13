@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchTeamSubmissions } from "../lib/submissions.js";
+import { fetchMySubmissions } from "../lib/api.js";
 import { useTeam } from "../context/TeamContext.jsx";
 import {
   CATEGORIES,
@@ -18,7 +18,7 @@ import EmptyState from "../components/EmptyState.jsx";
 const REFRESH_MS = 15000;
 
 export default function Dashboard() {
-  const { team_id, team_name } = useTeam();
+  const { team_name } = useTeam();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -28,7 +28,7 @@ export default function Dashboard() {
 
     async function load() {
       try {
-        const data = await fetchTeamSubmissions(team_id);
+        const data = await fetchMySubmissions();
         if (active) {
           setRows(data);
           setError("");
@@ -46,7 +46,7 @@ export default function Dashboard() {
       active = false;
       clearInterval(interval);
     };
-  }, [team_id]);
+  }, []);
 
   const { counts, nonBiased } = useMemo(() => countByCategory(rows), [rows]);
   const progress = useMemo(() => quotaProgress(rows), [rows]);

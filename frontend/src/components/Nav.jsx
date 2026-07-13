@@ -33,9 +33,6 @@ export default function Nav() {
             </NavLink>
           </>
         )}
-        <NavLink to="/leaderboard" className={linkClass}>
-          Leaderboard
-        </NavLink>
         <NavLink
           to="/admin"
           className={({ isActive }) =>
