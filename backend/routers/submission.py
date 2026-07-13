@@ -1,22 +1,37 @@
-"""Submission check endpoints."""
+"""Submission endpoints — checking, saving, and reading back a team's own rows.
+
+Every write and every "my data" read is scoped to the team_id embedded in the
+caller's session token (see utils/auth.py), never to a team_id supplied in the
+request body. This is what stops one team from submitting as, or reading,
+another team's data.
+"""
 
 import logging
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+import database
+from config import CATEGORIES
 from models.schemas import (
     CheckSubmissionRequest,
     CheckSubmissionResponse,
     DuplicateCheckResult,
+    MyCountResponse,
     PiiCheckResult,
+    SubmitRequest,
+    SubmitResponse,
 )
 from services.duplicate_service import check_duplicate, get_model
 from services.pii_service import scan_pii
+from utils.auth import require_team
 from utils.exceptions import AppError
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["submission"])
+
+TeamSession = Annotated[dict, Depends(require_team)]
 
 
 @router.post("/check-submission", response_model=CheckSubmissionResponse)
@@ -57,3 +72,43 @@ def check_submission(body: CheckSubmissionRequest):
     )
 
     return response
+
+
+@router.post("/submit", response_model=SubmitResponse)
+def submit(body: SubmitRequest, session: TeamSession):
+    """Insert a submission for the logged-in team. team_id comes from the
+    session token, not from the request body — a team can never write rows
+    under another team's id."""
+    team_id = session["team_id"]
+
+    row = {
+        "team_id": team_id,
+        "text": body.text.strip(),
+        "source_platform": body.source_platform,
+        "source_date": body.source_date,
+        "flag_duplicate": body.flag_duplicate,
+        "flag_pii": body.flag_pii,
+    }
+    for category in CATEGORIES:
+        row[category] = getattr(body, category)
+
+    result = database.insert_submission(row)
+    logger.info("submission saved team_id=%s id=%s", team_id, result.get("id"))
+    return SubmitResponse(id=result["id"])
+
+
+@router.get("/my-submissions")
+def my_submissions(session: TeamSession):
+    """Return only the logged-in team's own rows. Other teams' data never
+    leaves the backend for a non-admin session."""
+    team_id = session["team_id"]
+    columns = "id,team_id,text," + ",".join(
+        f'"{c}"' if c[0].isupper() else c for c in CATEGORIES
+    ) + ",source_platform,source_date,submitted_at,flag_duplicate,flag_pii,judge_reviewed"
+    return database.fetch_submissions_for_team(team_id, columns)
+
+
+@router.get("/my-count", response_model=MyCountResponse)
+def my_count(session: TeamSession):
+    team_id = session["team_id"]
+    return MyCountResponse(count=database.count_submissions_for_team(team_id))
