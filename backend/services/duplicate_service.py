@@ -30,6 +30,7 @@ from rapidfuzz import fuzz, process
 from sentence_transformers import SentenceTransformer
 
 from config import (
+    EMBEDDER_API_KEY,
     FUZZ_PREFILTER_THRESHOLD,
     FUZZ_TOP_K,
     MODEL_NAME,
@@ -73,7 +74,7 @@ class _CorpusCache:
         if not texts:
             return np.zeros((0, 1))
 
-        remote = encode_remote(texts)
+        remote = encode_remote(texts, api_key=EMBEDDER_API_KEY)
         if remote is not None:
             return remote
 

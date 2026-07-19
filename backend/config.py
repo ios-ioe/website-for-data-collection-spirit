@@ -66,6 +66,12 @@ SIMILARITY_THRESHOLD = float(os.environ.get("SIMILARITY_THRESHOLD", "0.90"))
 # and lets you restart/scale the embedder independently. If unset, falls back
 # to loading the model in-process exactly as before (single-Space deploy).
 EMBEDDER_URL = os.environ.get("EMBEDDER_URL", "").rstrip("/")
+# Shared secret sent as X-API-Key to the embedder Space, if it's deployed
+# with EMBEDDER_API_KEY set there too (see embedder/app.py's _check_auth).
+# Without this being set on BOTH sides, a publicly-deployed embedder Space
+# is an open, unauthenticated compute endpoint anyone on the internet can
+# call -- set it here to match whatever you set on the Space itself.
+EMBEDDER_API_KEY = os.environ.get("EMBEDDER_API_KEY", "")
 EMBEDDER_TIMEOUT_SECONDS = float(os.environ.get("EMBEDDER_TIMEOUT_SECONDS", "3.0"))
 # After this many consecutive embedder failures, stop calling it for
 # EMBEDDER_CIRCUIT_COOLDOWN_SECONDS and fall back to fuzzy-only matching

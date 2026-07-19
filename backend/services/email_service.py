@@ -37,8 +37,9 @@ def _build_email(team_name: str, access_code: str) -> tuple[str, str]:
         f"Hi {team_name},\n\n"
         f"Your team's access code for the bias data collection tool is:\n\n"
         f"    {access_code}\n\n"
-        f"Every member of the team can use this same code to log in on the "
-        f"submission page. Keep it private to your team -- do not share it "
+        f"To log in, each team member enters their OWN email address (the one "
+        f"this access code was sent to) together with this access code -- both "
+        f"are required. Keep the code private to your team -- do not share it "
         f"with other teams.\n\n"
         f"Good luck!\n"
     )

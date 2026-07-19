@@ -28,4 +28,16 @@ EXPOSE 7860
 # between workers since session tokens are stateless (HMAC-signed) and the
 # duplicate cache self-heals via ensure_fresh()'s row-count poll.
 # If you upgrade off the free tier to more vCPUs, raise this accordingly.
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "2"]
+# --proxy-headers + --forwarded-allow-ips='*' makes uvicorn read the real
+# client IP from X-Forwarded-For, set by whatever reverse proxy sits in
+# front of this container (HF Spaces / Render / Railway / etc. all do this).
+# Without this, request.client.host in app.py's rate limiter would see the
+# proxy's IP for every request, collapsing every participant into a single
+# shared rate-limit bucket -- exactly the scenario this event will hit at
+# the start, when everyone logs in around the same time. '*' trusts
+# whichever single hop connects directly to this container, which is
+# appropriate here since nothing external reaches this container directly
+# (the platform's own front door already terminates and forwards traffic) --
+# it is NOT appropriate if this were reachable directly from the internet
+# without a managed platform's proxy in front of it.
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "2", "--proxy-headers", "--forwarded-allow-ips", "*"]

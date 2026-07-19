@@ -5,6 +5,7 @@ import re
 import threading
 from typing import Optional, TypedDict
 
+from config import EMBEDDER_API_KEY
 from services.embedder_client import ner_remote
 
 logger = logging.getLogger(__name__)
@@ -267,7 +268,7 @@ def scan_pii_batch(texts: list[str]) -> list[PiiResult]:
     if not texts:
         return base_results
 
-    entities_per_text = ner_remote(texts)
+    entities_per_text = ner_remote(texts, api_key=EMBEDDER_API_KEY)
     if entities_per_text is None:
         entities_per_text = _local_ner_batch(texts)
 
