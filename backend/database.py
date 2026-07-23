@@ -68,7 +68,7 @@ def verify_access_code(code: str, email: str) -> Optional[dict]:
     sb = get_supabase()
     result = sb.rpc("verify_access_code", {"code": code, "member_email": email}).execute()
     rows = result.data or []
-    row = rows[0] if isinstance(rows, list) else rows
+    row = (rows[0] if rows else None) if isinstance(rows, list) else rows
     return row or None
 
 
@@ -140,7 +140,7 @@ def verify_judge_code(code: str) -> Optional[dict]:
     sb = get_supabase()
     result = sb.rpc("verify_judge_code", {"code": code}).execute()
     rows = result.data or []
-    row = rows[0] if isinstance(rows, list) else rows
+    row = (rows[0] if rows else None) if isinstance(rows, list) else rows
     return row or None
 
 
@@ -259,7 +259,7 @@ def fetch_admin_by_email(email: str) -> Optional[dict]:
     sb = get_supabase()
     result = sb.rpc("verify_admin_email", {"admin_email": email}).execute()
     rows = result.data or []
-    row = rows[0] if isinstance(rows, list) else rows
+    row = (rows[0] if rows else None) if isinstance(rows, list) else rows
     return row or None
 
 
